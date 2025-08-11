@@ -1,0 +1,25 @@
+{
+  "benchmark_id": "mmlu-reasoning-v1",
+  "description": "MMLU subset for logical reasoning evaluation",
+  "categories": ["mathematics", "formal_logic"],
+  "metadata": {
+    "source": "mmlu.v1",
+    "total_questions": 2,
+    "difficulty": "hard"
+  },
+  "data": [
+    {
+      "id": "math-001",
+      "category": "mathematics",
+      "question": "If a car travels at 60 km/h for 2.5 hours, then reduces speed to 40 km/h for 1.5 hours, what is the average speed for the entire trip?",
+      "options": [
+        "A) 45 km/h",
+        "B) 48 km/h",
+        "C) 52 km/h",
+        "D) 55 km/h"
+      ],
+      "answer": "C",
+      "rationale": "Total distance = (60*2.5) + (40*1.5) = 150 + 60 = 210 km. Total time = 4 hours. Average speed = 210/4 = 52.5 km/h → Rounded to 52 km/h"
+    }
+  ]
+}
