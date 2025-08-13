@@ -1,0 +1,286 @@
+{
+    "content": {
+        "more_information": {
+            "status": {
+                "description": "Renegotiated",
+                "value": "renegotiated",
+                "type": "enum"
+            },
+            "retention": {
+                "status": {
+                    "description": "Ativado",
+                    "value": "enabled",
+                    "type": "enum"
+                },
+                "rate": {
+                    "description": "10%",
+                    "value": 0.1,
+                    "type": "percentage"
+                }
+            },
+            "total_paid": {
+                "description": "R$ 33,13",
+                "value": 3313,
+                "type": "money"
+            },
+            "paid_percentage": {
+                "description": "0%",
+                "value": 0,
+                "type": "percentage"
+            },
+            "remaining_amount": {
+                "description": "R$ 11.171,92",
+                "value": 1117192,
+                "type": "money"
+            },
+            "remaining_amount_advance_payment": {
+                "description": "R$ 10.938,52",
+                "value": 1093852,
+                "type": "money"
+            },
+            "interest_economy_amount": {
+                "description": "R$ 0,58",
+                "value": 58,
+                "type": "money"
+            },
+            "is_overdue": false
+        },
+        "about_loan": {
+            "contract_url": "https:\/\/credit-sandbox.stone.com.br\/contracts-service\/api\/v1\/contracts\/jrdeebpb1fsu8d1kg5awyv8ez",
+            "installment_plan_id": "jrdeedcdt4h1fjxcaejkutajt",
+            "action_type": "renegotiation",
+            "informations": [
+                {
+                    "title": "Valor renegociado",
+                    "value": {
+                        "description": "R$ 10.238,69",
+                        "value": 1023869,
+                        "type": "money"
+                    },
+                    "has_tooltip": false
+                },
+                {
+                    "title": "Valor total das parcelas",
+                    "value": {
+                        "description": "R$ 11.205,63",
+                        "value": 1120563,
+                        "type": "money"
+                    },
+                    "has_tooltip": false
+                },
+                {
+                    "title": "Parcelado em",
+                    "value": {
+                        "description": "6x",
+                        "value": 6,
+                        "type": "integer"
+                    },
+                    "has_tooltip": false
+                },
+                {
+                    "title": "6 parcelas de",
+                    "value": {
+                        "description": "R$ 1.867,61",
+                        "value": 186761,
+                        "type": "money"
+                    },
+                    "has_tooltip": false
+                },
+                {
+                    "title": "Juros ao mês",
+                    "value": {
+                        "description": "2,30%",
+                        "value": 0.023,
+                        "type": "percentage"
+                    },
+                    "has_tooltip": false
+                },
+                {
+                    "title": "Juros ao ano",
+                    "value": {
+                        "description": "31,37%",
+                        "value": 0.3137,
+                        "type": "percentage"
+                    },
+                    "has_tooltip": false
+                },
+                {
+                    "title": "Contrato vence em",
+                    "value": {
+                        "description": "7 nov 2025",
+                        "value": "2025-11-07",
+                        "type": "date"
+                    },
+                    "has_tooltip": false
+                },
+                {
+                    "title": "IOF financiado",
+                    "value": {
+                        "description": "R$ 117,48",
+                        "value": 11748,
+                        "type": "money"
+                    },
+                    "has_tooltip": true,
+                    "tooltip_type": "iof",
+                    "description": "Imposto federal aplicado sobre operações financeiras."
+                },
+                {
+                    "title": "Custo Efetivo Total",
+                    "value": {
+                        "description": "36,73% ao ano",
+                        "value": 0.3673,
+                        "type": "percentage"
+                    },
+                    "has_tooltip": true,
+                    "tooltip_type": "cet",
+                    "description": "O CET é a soma de todos os custos da operação, ou seja, juros e IOF."
+                },
+                {
+                    "title": "Renegociado em",
+                    "value": {
+                        "description": "7 mai 2025",
+                        "value": "2025-05-07",
+                        "type": "date"
+                    },
+                    "has_tooltip": false
+                }
+            ]
+        },
+        "installments": [
+            {
+                "status": {
+                    "description": "Aberta",
+                    "value": "open",
+                    "type": "enum"
+                },
+                "amount": {
+                    "description": "R$ 1.867,61",
+                    "value": 186761,
+                    "type": "money"
+                },
+                "number": 1,
+                "information": "Vence em *9 jun 2025*"
+            },
+            {
+                "status": {
+                    "description": "Aberta",
+                    "value": "open",
+                    "type": "enum"
+                },
+                "amount": {
+                    "description": "R$ 1.867,61",
+                    "value": 186761,
+                    "type": "money"
+                },
+                "number": 2,
+                "information": "Vence em *7 jul 2025*"
+            },
+            {
+                "status": {
+                    "description": "Aberta",
+                    "value": "open",
+                    "type": "enum"
+                },
+                "amount": {
+                    "description": "R$ 1.867,61",
+                    "value": 186761,
+                    "type": "money"
+                },
+                "number": 3,
+                "information": "Vence em *7 ago 2025*"
+            },
+            {
+                "status": {
+                    "description": "Aberta",
+                    "value": "open",
+                    "type": "enum"
+                },
+                "amount": {
+                    "description": "R$ 1.867,61",
+                    "value": 186761,
+                    "type": "money"
+                },
+                "number": 4,
+                "information": "Vence em *8 set 2025*"
+            },
+            {
+                "status": {
+                    "description": "Futura",
+                    "value": "future",
+                    "type": "enum"
+                },
+                "amount": {
+                    "description": "R$ 1.867,61",
+                    "value": 186761,
+                    "type": "money"
+                },
+                "number": 5,
+                "information": "Abre em *8 set 2025*"
+            },
+            {
+                "status": {
+                    "description": "Futura",
+                    "value": "future",
+                    "type": "enum"
+                },
+                "amount": {
+                    "description": "R$ 1.867,61",
+                    "value": 186761,
+                    "type": "money"
+                },
+                "number": 6,
+                "information": "Abre em *8 out 2025*"
+            }
+        ],
+        "summary_installment": [
+            {
+                "status": {
+                    "description": "Aberta",
+                    "value": "open",
+                    "type": "enum"
+                },
+                "informations": [
+                    {
+                        "icon": "circle-money",
+                        "label": "Restam *R$ 1.833,89* para quitar"
+                    },
+                    {
+                        "icon": "calendar",
+                        "label": "Vence em *9 jun 2025*"
+                    }
+                ],
+                "installment_title": "PARCELA 1 DE 6",
+                "actions": [
+                    {
+                        "type": "anticipate_payment",
+                        "label": "Antecipar pagamento"
+                    },
+                    {
+                        "type": "see_installments",
+                        "label": "Conferir lista de parcelas"
+                    }
+                ],
+                "installment_number": 1
+            }
+        ],
+        "id": "jrdeebuxkbfge1c78t7t9dpdc",
+        "title": "Renegociação de R$ 10.238,69",
+        "loan_amount": {
+            "description": "R$ 10.238,69",
+            "value": 1023869,
+            "type": "money"
+        },
+        "warranties": [
+            {
+                "name": "Revit 07",
+                "document": "016.272.704-69",
+                "address": "Ernesto Ahlf, 136 CEP 89887000, Centro, Palmitos - SC",
+                "marital_status": "Solteiro(a)"
+            }
+        ],
+        "has_been_renegotiated": true,
+        "notifications": []
+    },
+    "trace_key": "sak_54374473994",
+    "is_valid": true
+}

@@ -1,0 +1,149 @@
+# 🐳 docker-compose.prod.yml - Production Configuration
+
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "80:8000"
+      - "443:8443"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - LOCAL_AGENT_ENDPOINT=${LOCAL_AGENT_ENDPOINT}
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=${REDIS_URL}
+      - SECRET_KEY=${SECRET_KEY}
+      - DEBUG=false
+      - LOG_LEVEL=INFO
+    depends_on:
+      - redis
+      - postgres
+    volumes:
+      - app_data:/app/data
+      - app_logs:/app/logs
+    networks:
+      - benchmark-network
+      - traefik-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.benchmark.rule=Host(`${DOMAIN_NAME}`)"
+      - "traefik.http.routers.benchmark.entrypoints=websecure"
+      - "traefik.http.routers.benchmark.tls.certresolver=myresolver"
+    restart: unless-stopped
+    deploy:
+      replicas: 3
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - benchmark-network
+    restart: unless-stopped
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - benchmark-network
+    restart: unless-stopped
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+
+  local-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile.local-agent
+    environment:
+      - DEBUG=false
+      - LOG_LEVEL=INFO
+    networks:
+      - benchmark-network
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana-enterprise
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    depends_on:
+      - prometheus
+    networks:
+      - benchmark-network
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    networks:
+      - benchmark-network
+    restart: unless-stopped
+
+  traefik:
+    image: traefik:v2.10
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
+      - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
+      - "--certificatesresolvers.myresolver.acme.email=${ACME_EMAIL}"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - letsencrypt_data:/letsencrypt
+    networks:
+      - traefik-network
+    restart: unless-stopped
+
+volumes:
+  app_data:
+  app_logs:
+  postgres_data:
+  redis_data:
+  grafana_data:
+  prometheus_data:
+  letsencrypt_data:
+
+networks:
+  benchmark-network:
+    driver: bridge
+  traefik-network:
+    driver: bridge

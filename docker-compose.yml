@@ -1,58 +1,91 @@
+# 🐳 Docker Compose Configuration
+
+version: '3.8'
+
 services:
   web:
     build: .
     ports:
       - "8000:8000"
     environment:
-      - POSTGRES_URL=postgresql://user:pass@postgres:5432/benchmark
-      - REDIS_URL=redis://redis:6379/0
       - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - SECRET_KEY=${SECRET_KEY}
-    depends_on:
-      - postgres
-      - redis
-    volumes:
-      - ./benchmark_service:/app/benchmark_service
-      - ./main.py:/app/main.py
-
-  worker:
-    build: .
-    command: celery -A workers.celery_app worker -l info
-    environment:
-      - POSTGRES_URL=postgresql://user:pass@postgres:5432/benchmark
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - LOCAL_AGENT_ENDPOINT=http://local-agent:8001/chat
+      - DATABASE_URL=postgresql://benchmark_user:benchmark_password@postgres:5432/benchmark_db
       - REDIS_URL=redis://redis:6379/0
     depends_on:
-      - postgres
       - redis
+      - postgres
+    volumes:
+      - ./data:/app/data
+    networks:
+      - benchmark-network
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - benchmark-network
+    restart: unless-stopped
 
   postgres:
     image: postgres:15
     environment:
-      POSTGRES_DB: benchmark
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: benchmark_db
+      POSTGRES_USER: benchmark_user
+      POSTGRES_PASSWORD: benchmark_password
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - benchmark-network
+    restart: unless-stopped
 
-  redis:
-    image: redis:7
+  local-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile.local-agent
     ports:
-      - "6379:6379"
+      - "8001:8001"
+    networks:
+      - benchmark-network
+    restart: unless-stopped
 
-  minio:
-    image: minio/minio
+  grafana:
+    image: grafana/grafana-enterprise
+    ports:
+      - "3000:3000"
     environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin
-    ports:
-      - "9000:9000"
-      - "9001:9001"
-    command: server /data --console-address ":9001"
+      - GF_SECURITY_ADMIN_PASSWORD=admin
     volumes:
-      - minio_data:/data
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    depends_on:
+      - prometheus
+    networks:
+      - benchmark-network
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    networks:
+      - benchmark-network
+    restart: unless-stopped
 
 volumes:
   postgres_data:
-  minio_data:
+  grafana_data:
+  prometheus_data:
+
+networks:
+  benchmark-network:
+    driver: bridge

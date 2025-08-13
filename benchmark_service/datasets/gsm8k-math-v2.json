@@ -1,0 +1,25 @@
+{
+  "benchmark_id": "gsm8k-math-v2",
+  "description": "Grade School Math problems",
+  "categories": ["arithmetic", "algebra"],
+  "metadata": {
+    "source": "gsm8k.v2",
+    "total_questions": 2,
+    "difficulty": "medium"
+  },
+  "data": [
+    {
+      "id": "arith-001",
+      "category": "arithmetic",
+      "question": "If John has 15 apples and gives 1/3 of them to Mary, then buys 10 more apples, how many apples does he have?",
+      "options": [
+        "A) 15 apples",
+        "B) 20 apples",
+        "C) 25 apples",
+        "D) 30 apples"
+      ],
+      "answer": "B",
+      "rationale": "John starts with 15 apples. He gives 1/3 (5 apples) to Mary, leaving him with 10 apples. He then buys 10 more, giving him 20 apples total."
+    }
+  ]
+}

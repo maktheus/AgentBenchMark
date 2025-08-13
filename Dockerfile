@@ -1,35 +1,33 @@
-# Stage 1: Build
-FROM python:3.11-slim-bookworm AS builder
-WORKDIR /app
+# 🐳 Dockerfile for Main Application
 
-# Instala dependências de compilação
-RUN apt-get update && apt-get install -y build-essential
-
-# Configura variáveis de ambiente
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
-
-# Instala dependências
-COPY requirements.txt .
-RUN pip install --user --no-cache-dir -r requirements.txt
-
-# Stage 2: Runtime
 FROM python:3.11-slim-bookworm
+
+# Set working directory
 WORKDIR /app
 
-# Cria usuário não-root
-RUN useradd -m appuser && chown -R appuser:appuser /app
-USER appuser
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copia dependências
-COPY --from=builder /root/.local /home/appuser/.local
+# Copy requirements and install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Adiciona PATH para binários do usuário
-ENV PATH=/home/appuser/.local/bin:$PATH
-
-# Copia código da aplicação
+# Copy application code
 COPY . .
 
-# Configura entrypoint
+# Create necessary directories
+RUN mkdir -p data logs
+
+# Expose port
 EXPOSE 8000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8000/health || exit 1
+
+# Default command
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]

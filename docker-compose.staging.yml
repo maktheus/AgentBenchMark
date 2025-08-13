@@ -1,0 +1,95 @@
+# 🐳 docker-compose.staging.yml - Staging Configuration
+
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - LOCAL_AGENT_ENDPOINT=${LOCAL_AGENT_ENDPOINT}
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=${REDIS_URL}
+      - SECRET_KEY=${SECRET_KEY}
+      - DEBUG=true
+      - LOG_LEVEL=DEBUG
+    depends_on:
+      - redis
+      - postgres
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    networks:
+      - benchmark-network
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - benchmark-network
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - postgres_staging_data:/var/lib/postgresql/data
+    networks:
+      - benchmark-network
+    restart: unless-stopped
+
+  local-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile.local-agent
+    ports:
+      - "8001:8001"
+    networks:
+      - benchmark-network
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana-enterprise
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - grafana_staging_data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    networks:
+      - benchmark-network
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_staging_data:/prometheus
+    networks:
+      - benchmark-network
+    restart: unless-stopped
+
+volumes:
+  postgres_staging_data:
+  grafana_staging_data:
+  prometheus_staging_data:
+
+networks:
+  benchmark-network:
+    driver: bridge

@@ -1,0 +1,172 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "AI Benchmark Service",
+    "tags": ["ai", "benchmark", "performance"],
+    "timezone": "browser",
+    "schemaVersion": 16,
+    "version": 0,
+    "refresh": "25s",
+    "rows": [
+      {
+        "title": "Overview",
+        "height": "250px",
+        "panels": [
+          {
+            "id": 1,
+            "title": "Total Benchmarks",
+            "type": "singlestat",
+            "span": 3,
+            "targets": [
+              {
+                "expr": "count(benchmark_runs_total)",
+                "format": "time_series"
+              }
+            ],
+            "valueName": "current"
+          },
+          {
+            "id": 2,
+            "title": "Active Benchmarks",
+            "type": "singlestat",
+            "span": 3,
+            "targets": [
+              {
+                "expr": "sum(benchmark_runs_active)",
+                "format": "time_series"
+              }
+            ],
+            "valueName": "current"
+          },
+          {
+            "id": 3,
+            "title": "Success Rate",
+            "type": "singlestat",
+            "span": 3,
+            "targets": [
+              {
+                "expr": "sum(benchmark_runs_success) / sum(benchmark_runs_total) * 100",
+                "format": "time_series"
+              }
+            ],
+            "valueName": "current",
+            "prefix": "",
+            "postfix": "%"
+          },
+          {
+            "id": 4,
+            "title": "Average Response Time",
+            "type": "singlestat",
+            "span": 3,
+            "targets": [
+              {
+                "expr": "avg(benchmark_response_time_seconds)",
+                "format": "time_series"
+              }
+            ],
+            "valueName": "current",
+            "prefix": "",
+            "postfix": "s"
+          }
+        ]
+      },
+      {
+        "title": "Performance Metrics",
+        "height": "300px",
+        "panels": [
+          {
+            "id": 5,
+            "title": "Benchmark Response Time",
+            "type": "graph",
+            "span": 6,
+            "targets": [
+              {
+                "expr": "benchmark_response_time_seconds",
+                "format": "time_series"
+              }
+            ],
+            "yaxes": [
+              {
+                "format": "s",
+                "label": "Response Time (seconds)"
+              },
+              {
+                "format": "short"
+              }
+            ]
+          },
+          {
+            "id": 6,
+            "title": "Benchmark Throughput",
+            "type": "graph",
+            "span": 6,
+            "targets": [
+              {
+                "expr": "rate(benchmark_requests_total[5m])",
+                "format": "time_series"
+              }
+            ],
+            "yaxes": [
+              {
+                "format": "reqps",
+                "label": "Requests per Second"
+              },
+              {
+                "format": "short"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Agent Performance",
+        "height": "300px",
+        "panels": [
+          {
+            "id": 7,
+            "title": "Agent Accuracy by Type",
+            "type": "graph",
+            "span": 6,
+            "targets": [
+              {
+                "expr": "benchmark_agent_accuracy",
+                "format": "time_series"
+              }
+            ],
+            "yaxes": [
+              {
+                "format": "percent",
+                "label": "Accuracy (%)"
+              },
+              {
+                "format": "short"
+              }
+            ]
+          },
+          {
+            "id": 8,
+            "title": "Agent Latency",
+            "type": "graph",
+            "span": 6,
+            "targets": [
+              {
+                "expr": "benchmark_agent_latency_seconds",
+                "format": "time_series"
+              }
+            ],
+            "yaxes": [
+              {
+                "format": "s",
+                "label": "Latency (seconds)"
+              },
+              {
+                "format": "short"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "overwrite": true
+}

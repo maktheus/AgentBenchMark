@@ -1,0 +1,24 @@
+# 📁 k8s/configmap.yaml
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: benchmark-config
+  namespace: benchmark-service
+data:
+  DEBUG: "false"
+  LOG_LEVEL: "INFO"
+  DATABASE_POOL_SIZE: "20"
+  DATABASE_MAX_OVERFLOW: "10"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-init
+  namespace: benchmark-service
+data:
+  init.sql: |
+    CREATE DATABASE benchmark_db;
+    \c benchmark_db;
+    CREATE USER benchmark_user WITH PASSWORD 'benchmark_password';
+    GRANT ALL PRIVILEGES ON DATABASE benchmark_db TO benchmark_user;
